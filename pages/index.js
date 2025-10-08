@@ -1,85 +1,62 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Home() {
-  const [data, setData] = useState(null);
-  const [unit, setUnit] = useState("ounces");
-  const [loading, setLoading] = useState(false);
-
-  const fetchPrices = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/prices");
-      const json = await res.json();
-      setData(json);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [btcGold, setBtcGold] = useState(null);
+  const [usdGold, setUsdGold] = useState(null);
+  const [usdBtc, setUsdBtc] = useState(null);
 
   useEffect(() => {
-    fetchPrices();
-    const id = setInterval(fetchPrices, 60000);
-    return () => clearInterval(id);
+    async function fetchData() {
+      try {
+        // CoinGecko APIでBTC/USD
+        const btcData = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+        );
+        const goldData = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=gold&vs_currencies=usd"
+        );
+
+        const btcUsd = btcData.data.bitcoin.usd;
+        const goldUsd = goldData.data.gold.usd;
+        const btcGoldPrice = btcUsd / goldUsd;
+
+        setUsdBtc(btcUsd);
+        setUsdGold(goldUsd);
+        setBtcGold(btcGoldPrice.toFixed(2));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, []);
 
-  if (!data) return <main style={{ padding: 20 }}>Loading...</main>;
-
-  const { btcUsd, goldUsdPerOunce, btcInOunces, btcInGrams, updatedAt, cached } = data;
-
   return (
-    <main
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        padding: 20,
-        maxWidth: 600,
-        margin: "0 auto",
-      }}
-    >
-      <h1>💰 BTC / GOLD</h1>
-      <p>最終更新: {new Date(updatedAt).toLocaleString()} {cached ? "(cached)" : ""}</p>
-      <div style={{ marginBottom: 10 }}>
-        <strong>BTC (USD):</strong> ${btcUsd.toLocaleString()}
-        <br />
-        <strong>Gold (USD/oz):</strong> ${goldUsdPerOunce.toLocaleString()}
-      </div>
-
-      <div style={{ margin: "10px 0" }}>
-        <label>
-          <input
-            type="radio"
-            checked={unit === "ounces"}
-            onChange={() => setUnit("ounces")}
-          />
-          オンス建て
-        </label>
-        <label style={{ marginLeft: 12 }}>
-          <input
-            type="radio"
-            checked={unit === "grams"}
-            onChange={() => setUnit("grams")}
-          />
-          グラム建て
-        </label>
-      </div>
-
-      <div
-        style={{
-          fontSize: 22,
-          fontWeight: "bold",
-          marginTop: 10,
-          color: "#c19b00",
-        }}
-      >
-        {unit === "ounces"
-          ? `${btcInOunces.toLocaleString(undefined, { maximumFractionDigits: 6 })} troy oz`
-          : `${btcInGrams.toLocaleString(undefined, { maximumFractionDigits: 2 })} g`}
-      </div>
-
-      <p style={{ color: "#777", fontSize: 12, marginTop: 20 }}>
-        Source: CoinGecko API
-      </p>
-    </main>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      fontFamily: "sans-serif",
+      backgroundColor: "#0b0b0b",
+      color: "#f5c542"
+    }}>
+      <h1>🏆 BTC in Gold (XAU)</h1>
+      {btcGold ? (
+        <>
+          <p>1 BTC = {btcGold} oz Gold</p>
+          <p style={{ fontSize: "0.9em", color: "#aaa" }}>
+            (BTC/USD: ${usdBtc} | XAU/USD: ${usdGold})
+          </p>
+        </>
+      ) : (
+        <p>Loading prices...</p>
+      )}
+      <footer style={{ position: "absolute", bottom: "20px", fontSize: "0.8em", color: "#777" }}>
+        Powered by CoinGecko
+      </footer>
+    </div>
   );
 }
