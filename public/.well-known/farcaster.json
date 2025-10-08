@@ -1,20 +1,7 @@
 {
   "accountAssociation": {
-    "header": "<PASTE_JFS_HEADER>",
-    "payload": "<PASTE_JFS_PAYLOAD>",
-    "signature": "<PASTE_JFS_SIGNATURE>"
-  },
-  "miniapp": {
-    "version": "1",
-    "name": "BTC-GOLD MiniApp",
-    "homeUrl": "https://your-vercel-app-url.vercel.app",
-    "iconUrl": "https://your-vercel-app-url.vercel.app/icon.png",
-    "description": "Bitcoin price denominated in gold (how many ounces or grams of gold equals 1 BTC).",
-    "authors": [
-      {
-        "name": "Your Name",
-        "url": "https://warpcast.com/your-handle"
-      }
-    ]
+    "header": "eyJmaWQiOjE5MzQ5OCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweGE2NTNEQ0ZGNTUxMDkwYzExNjU2M2M5Y0ZmNEIxZTc1NDgxNDYxYWYifQ",
+    "payload": "eyJkb21haW4iOiJidGMtZ29sZC0yLnZlcmNlbC5hcHAifQ",
+    "signature": "MHg0ZWE4ZWQ1YTc1MDRhZGFiMmMwZTU1Y2JkNzg3MTU3ZDAyYWJhYTJkZjEyY2JmYzk3NDQ3YjY1MzdlNGI3MDM5MDhkNTE3M2U0ZGY4NDA1MTBlOTdiOGRjNmY0YTZhYzMzMzI4YTEzZWYwMzNmYmU4ODJjMTZmNjRhZDczOTdkYzFj"
   }
 }
